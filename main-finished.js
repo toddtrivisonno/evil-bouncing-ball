@@ -33,7 +33,7 @@ function Shape(x, y, velX, velY, exists) {
  }
 
 //  Defining Evil Circle
- function EvilCircle(x, y, velX, velY, exists) {
+ function EvilCircle(x, y, exists) {
    Shape.call(this, x, y, 20, 20, exists);
 
    this.color = 'white';
@@ -50,26 +50,29 @@ function Shape(x, y, velX, velY, exists) {
 };
 
 // EvilCircle checkBounds Method
-EvilCircle.prototype.update = function() {
+EvilCircle.prototype.checkBounds = function() {
   if((this.x + this.size) >= width) {
-    this.x -= -(this.velX); //too far right, so move left
+    this.x -= this.size; //too far right, so move left
   }
 
   if((this.x - this.size) <= 0) {
-    this.x += -(this.velX); //too far left, so move right
+    this.x += this.size; //too far left, so move right
   }
 
   if((this.y + this.size) >= height) {
-    this.y += -(this.velY); //too far up, so move down
+    this.y -= this.size; //too far up, so move down
   }
 
   if((this.y - this.size) <= 0) {
-    this.y -= -(this.velY); //too far down, so move up
+    this.y += this.size; //too far down, so move up
   }
-  
+
+};
+
 //  Set Controls
+EvilCircle.prototype.setControls = function() {
   var _this = this;
-window.onkeydown = function(e) {
+  window.onkeydown = function(e) {
     if (e.keyCode === 65) {
       _this.x -= _this.velX;
     } else if (e.keyCode === 68) {
@@ -78,6 +81,21 @@ window.onkeydown = function(e) {
       _this.y -= _this.velY;
     } else if (e.keyCode === 83) {
       _this.y += _this.velY;
+    }
+  }
+}
+
+// EvilCircle collisionDetect method
+EvilCircle.prototype.collisionDetect = function() {
+  for(var j = 0; j < balls.length; j++) {
+    if(balls[j].exists) {
+      var dx = this.x - balls[j].x;
+      var dy = this.y - balls[j].y;
+      var distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < this.size + balls[j].size) {
+        balls[j] = !(this.exists);
+      }
     }
   }
 };
@@ -165,6 +183,14 @@ function loop() {
   requestAnimationFrame(loop);
 }
 
-
+EvilCircle.draw();
+EvilCircle.checkBounds();
+EvilCircle.collisionDetect();
 
 loop();
+
+// Ball Counter
+
+var p = document.querySelector('p');
+var count = 0;
+count = balls.length;
