@@ -21,7 +21,7 @@ function Shape(x, y, velX, velY, exists) {
   this.y = y;
   this.velX = velX;
   this.velY = velY;
-  this.exists = true;
+  this.exists = exists;
 }
 
  function Ball(x, y, velX, velY, color, size, exists) {
@@ -29,7 +29,59 @@ function Shape(x, y, velX, velY, exists) {
  
    this.color = color;
    this.size = size;
+   this.exists = true;
  }
+
+//  Defining Evil Circle
+ function EvilCircle(x, y, velX, velY, exists) {
+   Shape.call(this, x, y, 20, 20, exists);
+
+   this.color = 'white';
+   this.size = 10;
+ }
+
+//  EvilCircle Draw Method
+ EvilCircle.prototype.draw = function() {
+  ctx.beginPath();
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = this.color;
+  ctx.arc(this.x, this.y, this.size, 0, 2 * Math.PI);
+  ctx.stroke();
+};
+
+// EvilCircle checkBounds Method
+EvilCircle.prototype.update = function() {
+  if((this.x + this.size) >= width) {
+    this.x -= -(this.velX); //too far right, so move left
+  }
+
+  if((this.x - this.size) <= 0) {
+    this.x += -(this.velX); //too far left, so move right
+  }
+
+  if((this.y + this.size) >= height) {
+    this.y += -(this.velY); //too far up, so move down
+  }
+
+  if((this.y - this.size) <= 0) {
+    this.y -= -(this.velY); //too far down, so move up
+  }
+  
+//  Set Controls
+  var _this = this;
+window.onkeydown = function(e) {
+    if (e.keyCode === 65) {
+      _this.x -= _this.velX;
+    } else if (e.keyCode === 68) {
+      _this.x += _this.velX;
+    } else if (e.keyCode === 87) {
+      _this.y -= _this.velY;
+    } else if (e.keyCode === 83) {
+      _this.y += _this.velY;
+    }
+  }
+};
+
 
 // define ball draw method
 
